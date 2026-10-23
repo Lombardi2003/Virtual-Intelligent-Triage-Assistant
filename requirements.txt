@@ -11,12 +11,3 @@ SQLAlchemy==2.0.43
 aiosqlite==0.21.0                   # not imported directly: lets the chat archive use SQLite
 pillow==11.1.0
 pymupdf==1.28.0                     # writes the PDF of a chat
-
-# Guideline retrieval
-langchain-chroma==1.1.0
-chromadb==1.5.9                     # pinned: versions before 1.0 need a C++ compiler on Windows
-langchain-community==0.4.1
-pypdf==6.1.1                        # not imported directly: required by the PDF loader
-langchain-text-splitters==1.1.0
-langchain-huggingface[full]==1.2.2
-huggingface_hub==1.30.0
