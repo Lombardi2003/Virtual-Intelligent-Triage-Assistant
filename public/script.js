@@ -7,6 +7,7 @@
     const BUTTON_ID = "vita-pdf";
     const REPORT = '[data-step-type="assistant_message"] img[src*="/avatars/Primario"]';
     const THREAD = /^\/thread\/([0-9a-f-]+)/i;
+    const archived = new Map();  // Chat id -> whether the archive holds it, once the app has answered.
 
     function createButton() {
         const button = document.createElement("button");
@@ -21,12 +22,26 @@
         return button;
     }
 
-    // Keeps the button as the last element of the chat, and only in a chat that has its report.
+    // A trial chat (test fiscal code) is kept out of the archive, so it has no PDF: the app is asked once per chat.
+    function isArchived(thread) {
+        if (archived.has(thread)) return archived.get(thread);
+        archived.set(thread, undefined);
+        fetch("/project/thread/" + thread, { credentials: "same-origin" })
+            .then((response) => {
+                archived.set(thread, response.ok);
+                placeButton();
+            })
+            .catch(() => archived.delete(thread));
+        return undefined;
+    }
+
+    // Keeps the button as the last element of the chat, and only in an archived chat that has its report.
     function placeButton() {
         const existing = document.getElementById(BUTTON_ID);
         const report = document.querySelector(REPORT);
         const step = report && report.closest(".step");
-        if (!step || !step.parentElement || !THREAD.test(window.location.pathname)) {
+        const thread = THREAD.exec(window.location.pathname);
+        if (!step || !step.parentElement || !thread || isArchived(thread[1]) !== true) {
             if (existing) existing.remove();
             return;
         }
@@ -39,9 +54,10 @@
     new MutationObserver(() => {
         if (scheduled) return;
         scheduled = true;
-        requestAnimationFrame(() => {
+        // A timer rather than requestAnimationFrame, which the browser pauses while the page is not drawn.
+        setTimeout(() => {
             scheduled = false;
             placeButton();
-        });
+        }, 100);
     }).observe(document.documentElement, { childList: true, subtree: true });
 })();

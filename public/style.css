@@ -1172,3 +1172,30 @@ blockquote.border-l-2 {
 body:has([data-step-type="assistant_message"] img[src*="/avatars/Daniele"]) div:has(> div > #message-composer) {
     display: none !important;
 }
+
+/*
+ * TRIAGE CONCLUSO
+ * Dopo il report di sintesi il triage e' finito e l'app non risponde piu': al posto della casella dei messaggi
+ * resta una riga che dice come passare al paziente successivo.
+ */
+body:has([data-step-type="assistant_message"] img[src*="/avatars/Primario"]) #message-composer {
+    display: none !important;
+}
+body:has([data-step-type="assistant_message"] img[src*="/avatars/Primario"]) div:has(> #message-composer)::before {
+    content: "Triage concluso: per un nuovo paziente, aprire una nuova chat";
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 18px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+.dark body:has([data-step-type="assistant_message"] img[src*="/avatars/Primario"]) div:has(> #message-composer)::before {
+    color: rgba(252, 252, 252, 0.8);
+    border: 1px dashed rgba(27, 211, 157, 0.55);
+}
+.light body:has([data-step-type="assistant_message"] img[src*="/avatars/Primario"]) div:has(> #message-composer)::before {
+    color: rgba(31, 41, 55, 0.8);
+    border: 1px dashed rgba(0, 168, 122, 0.6);
+}
